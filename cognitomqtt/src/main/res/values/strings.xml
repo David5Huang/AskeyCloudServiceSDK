@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">cognitomqtt</string>
+    <string name="start_txt">Sample:\nConnection MQTT by AWS Cognito credentials.</string>
+
+    <string name="mqtt_test_step00_txt">Step 1:</string>
+    <string name="mqtt_test_step00_btn_txt">Get Device Info.</string>
+
+    <string name="mqtt_test_step01_txt">Step 2:</string>
+    <string name="mqtt_test_step01_btn_txt">Connect android service.</string>
+
+    <string name="mqtt_test_step02_txt">Step 3:</string>
+    <string name="mqtt_test_step02_btn_txt">Connect MQTT service.</string>
+
+    <string name="mqtt_test_step03_txt">Step 4:</string>
+    <string name="mqtt_test_step03_btn_txt">Go to thing sample.</string>
+
+</resources>

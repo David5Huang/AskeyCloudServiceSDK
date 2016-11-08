@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <Button
+                android:id="@+id/ia4_test_fb_login_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FB LOGIN"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_email_register_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Register"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_email_login_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_pk_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Keypair test"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_cert_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cert test"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_device_info_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="device info"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_device_list_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="device list"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_device_basic_info_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="device single info"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_device_detail_info_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="device detail info"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_mqtt_connect_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="Mqtt Connect"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_mqtt_cert_connect_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="Mqtt Cert Connect"
+                android:visibility="gone"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_mqtt_desire_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="Mqtt desired"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_mqtt_report_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="Mqtt reported"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_mqtt_states_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="Mqtt states"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_get_shadow_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="get shadow"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_api_test_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="api test"
+                android:visibility="gone"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_act_device_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="act device"
+                android:visibility="gone"
+                />
+
+
+            <Button
+                android:id="@+id/ia4_test_change_name_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="change name"
+                android:visibility="gone"
+                />
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

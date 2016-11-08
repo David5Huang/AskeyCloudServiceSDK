@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">iotthingtest</string>
+
+    <string name="thing_test_start_txt">Sample:\nIoT thing control.</string>
+
+    <string name="thing_test_subcribe_btn_txt">Scribe Thing</string>
+
+    <string name="thing_test_desired_btn_txt">Publish Desired</string>
+
+    <string name="thing_test_reported_btn_txt">Publish Reported</string>
+
+    <string name="thing_test_read_shadow_btn_txt">Read Shadow</string>
+</resources>

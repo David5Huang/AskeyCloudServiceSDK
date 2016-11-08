@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/auth_api_bg"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/auth_test_start_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/auth_basic_txt"
+                android:text="@string/auth_start_txt"
+                android:textSize="40sp"
+                android:layout_margin="20dp"
+                />
+
+            <LinearLayout
+                android:id="@+id/auth_test_step01_block"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:visibility="gone"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/auth_basic_txt"
+                    android:text="@string/auth_step01_txt"
+                    android:textSize="22sp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    />
+
+                <Button
+                    android:id="@+id/auth_test_step01_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:background="@drawable/auth_btn"
+                    android:text="@string/auth_step01_btn_txt"
+                    android:textColor="@color/auth_btn_txt"
+                    android:padding="10dp"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/auth_test_step02_block"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:visibility="gone"
+                >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/auth_basic_txt"
+                    android:text="@string/auth_step02_txt"
+                    android:textSize="22sp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    />
+
+                <Button
+                    android:id="@+id/auth_test_step02_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="22sp"
+                    android:background="@drawable/auth_btn"
+                    android:text="@string/auth_step02_btn_txt"
+                    android:textColor="@color/auth_btn_txt"
+                    android:padding="10dp"
+                    />
+
+            </LinearLayout>
+
+            <!--<LinearLayout-->
+                <!--android:id="@+id/auth_test_step03_block"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:layout_marginBottom="15dp"-->
+                <!--android:layout_marginLeft="20dp"-->
+                <!--android:layout_marginRight="20dp"-->
+                <!--android:visibility="gone"-->
+                <!--&gt;-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/auth_basic_txt"-->
+                    <!--android:text="@string/auth_step03_txt"-->
+                    <!--android:textSize="22sp"-->
+                    <!--android:layout_marginBottom="10dp"-->
+                    <!--android:layout_marginLeft="5dp"-->
+                    <!--/>-->
+
+                <!--<Button-->
+                    <!--android:id="@+id/auth_test_step03_btn"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textSize="22sp"-->
+                    <!--android:background="@drawable/auth_btn"-->
+                    <!--android:text="@string/auth_step03_btn_txt"-->
+                    <!--android:textColor="@color/auth_btn_txt"-->
+                    <!--android:padding="10dp"-->
+                    <!--/>-->
+
+            <!--</LinearLayout>-->
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

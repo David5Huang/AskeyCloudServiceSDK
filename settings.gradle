@@ -1,0 +1,1 @@
+include ':app', ':askeywebservice', ':smarthometest', ':cognitomqtt', ':authapi', ':iotthingtest'

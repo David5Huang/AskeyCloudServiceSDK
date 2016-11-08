@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="auth_api_bg">#FFB74D</color>
+    <color name="auth_basic_txt">#424242</color>
+    <color name="auth_btn_txt">#ffffff</color>
+    <color name="auth_btn_non_press">#EF6C00</color>
+    <color name="auth_btn_press">#E65100</color>
+</resources>

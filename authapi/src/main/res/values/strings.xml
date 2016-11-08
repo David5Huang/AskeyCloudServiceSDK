@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">authapi</string>
+    <string name="auth_start_txt">Please Auth by Facebook for after sample.</string>
+
+    <string name="auth_step01_txt">Step 1:</string>
+    <string name="auth_step01_btn_txt">Login By Facebook</string>
+
+    <string name="auth_step03_txt">Step 3:</string>
+    <string name="auth_step03_btn_txt">Get Device Info</string>
+
+    <string name="auth_step02_txt">Step 2:</string>
+    <string name="auth_step02_btn_txt">Go to next sample.</string>
+
+</resources>
