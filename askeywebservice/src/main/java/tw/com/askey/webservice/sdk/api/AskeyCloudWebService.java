@@ -28,6 +28,7 @@ public interface AskeyCloudWebService {
      * @param request
      * @return
      */
+    @Deprecated
     @POST("user/getkeypair")
     Call<String> getKeyPair(@Body String request);
 
@@ -36,6 +37,7 @@ public interface AskeyCloudWebService {
      * @param userId
      * @return
      */
+    @Deprecated
     @GET("user/getcert")
     Call<String> getCert(@Query("userid") String userId);
 
@@ -51,6 +53,7 @@ public interface AskeyCloudWebService {
      * @param request
      * @return
      */
+    @Deprecated
     @PUT("device")
     Call<String> activeDevice(@Body String request);
 
@@ -61,6 +64,7 @@ public interface AskeyCloudWebService {
      * @param uniqueid
      * @return
      */
+    @Deprecated
     @GET("device")
     Call<String> getDeviceInfo(@Query("userid") String userid, @Query("model") String model, @Query("uniqueid") String uniqueid);
 
@@ -78,6 +82,7 @@ public interface AskeyCloudWebService {
      * @param deviceId
      * @return
      */
+    @Deprecated
     @GET("device/{deviceid}")
     Call<String> getDeviceBasicInfo(@Path("deviceid") String deviceId);
 
@@ -86,6 +91,7 @@ public interface AskeyCloudWebService {
      * @param userId
      * @return
      */
+    @Deprecated
     @GET("devicelist")
     Call<String> getUserDeviceList(@Query("userid") String userId);
 
@@ -97,5 +103,18 @@ public interface AskeyCloudWebService {
      */
     @GET("device/{deviceid}/detail")
     Call<String> getDeviceDetailInfo(@Path("deviceid") String deviceId);
+
+
+    @GET("device/iotcert/{userid}")
+    Call<String> getIoTCert(@Path("userid") String userId);
+
+    @POST("device/create")
+    Call<String> createIoTDevice(@Body String request);
+
+    @GET("device/list")
+    Call<String> userIoTDeviceList(@Query("userid") String userId);
+
+    @GET("device/lookup")
+    Call<String> lookupIoTDeviceInfo(@Query("userid") String userId, @Query("model") String model, @Query("uniqueid") String uniqueId);
 
 }

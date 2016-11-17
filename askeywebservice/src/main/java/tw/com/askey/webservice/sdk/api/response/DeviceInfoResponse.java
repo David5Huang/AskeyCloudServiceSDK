@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
         "device"
 })
+@Deprecated
 public class DeviceInfoResponse extends BasicResponse {
 
     @JsonProperty("device")

@@ -7,7 +7,7 @@ import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.services.cognitosync.AmazonCognitoSync;
 import com.amazonaws.services.cognitosync.AmazonCognitoSyncClient;
 
-import tw.com.askey.webservice.sdk.model.CognitoDataModel;
+import tw.com.askey.webservice.sdk.model.auth.CognitoDataModel;
 import tw.com.askey.webservice.sdk.model.ServicePreference;
 
 

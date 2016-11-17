@@ -3,6 +3,8 @@ package tw.com.askey.webservice.sdk.model;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import tw.com.askey.webservice.sdk.model.auth.CognitoDataModel;
+
 /**
  * Created by david5_huang on 2016/7/11.
  */

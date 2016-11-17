@@ -1,4 +1,4 @@
-package tw.com.askey.webservice.sdk.api.response;
+package tw.com.askey.webservice.sdk.api.response.device;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,11 +15,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
         "devices"
 })
-@Deprecated
-public class UserDeviceListResponse extends BasicResponse {
+public class UserIoTDeviceListResponse {
 
     @JsonProperty("devices")
-    private List<String> devices = new ArrayList<String>();
+    private List<UserIoTDevice> devices = new ArrayList<UserIoTDevice>();
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -29,7 +28,7 @@ public class UserDeviceListResponse extends BasicResponse {
      * The devices
      */
     @JsonProperty("devices")
-    public List<String> getDevices() {
+    public List<UserIoTDevice> getDevices() {
         return devices;
     }
 
@@ -39,8 +38,13 @@ public class UserDeviceListResponse extends BasicResponse {
      * The devices
      */
     @JsonProperty("devices")
-    public void setDevices(List<String> devices) {
+    public void setDevices(List<UserIoTDevice> devices) {
         this.devices = devices;
+    }
+
+    public UserIoTDeviceListResponse withDevices(List<UserIoTDevice> devices) {
+        this.devices = devices;
+        return this;
     }
 
     @JsonAnyGetter
@@ -51,6 +55,11 @@ public class UserDeviceListResponse extends BasicResponse {
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    public UserIoTDeviceListResponse withAdditionalProperty(String name, Object value) {
+        this.additionalProperties.put(name, value);
+        return this;
     }
 
 }

@@ -1,14 +1,13 @@
-package tw.com.askey.webservice.sdk.model;
+package tw.com.askey.webservice.sdk.model.auth;
 
 /**
  * Created by david5_huang on 2016/7/5.
  */
-public class CognitoDataModel {
+public class CognitoDataModel extends BasicUserDataModel {
     private String identityID;
     private String accessKey;
     private String secretKey;
     private String sessionToken;
-    private String userID;
 
     public boolean isCanUseDataModel(){
         return identityID != null && accessKey != null && secretKey != null && sessionToken != null;
@@ -46,11 +45,4 @@ public class CognitoDataModel {
         this.sessionToken = sessionToken;
     }
 
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
 }

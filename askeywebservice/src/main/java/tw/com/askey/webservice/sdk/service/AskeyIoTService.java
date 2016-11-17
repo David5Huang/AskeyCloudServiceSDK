@@ -6,15 +6,18 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback;
+
+import java.util.ArrayList;
+
+import tw.com.askey.webservice.sdk.api.response.auth.AWSIoTCertResponse;
 import tw.com.askey.webservice.sdk.iot.message.builder.MqttMsgBuilder;
-import tw.com.askey.webservice.sdk.model.ServicePreference;
 import tw.com.askey.webservice.sdk.iot.MqttActionConst;
 import tw.com.askey.webservice.sdk.iot.callback.MqttConnectionCallback;
 import tw.com.askey.webservice.sdk.iot.MqttService;
 import tw.com.askey.webservice.sdk.iot.callback.MqttServiceConnectedCallback;
-import tw.com.askey.webservice.sdk.iot.callback.ReadThingShadowCallback;
-import tw.com.askey.webservice.sdk.task.ReadThingShadowTask;
 
 /**
  * Created by david5_huang on 2016/8/3.<br/>
@@ -38,8 +41,38 @@ public class AskeyIoTService {
         return instance;
     }
 
-    public AskeyIoTService(Context context){
+    AskeyIoTService(Context context){
         this.context = context;
+    }
+
+    public void connectIoTMQTTService(final String endpoint,
+                                      final String userName,
+                                      final AWSIoTCertResponse certResponse,
+                                      final ArrayList<String> topics,
+                                      final MqttServiceConnectedCallback serviceCallback){
+        configAWSIot(endpoint, new MqttServiceConnectedCallback() {
+            @Override
+            public void onMqttServiceConnectedSuccess() {
+                connectToAWSIot(userName, certResponse.getCertificatePem(), certResponse.getPrivateKey(), new MqttConnectionCallback() {
+                    @Override
+                    public void onConnected() {
+                        for(int i=0;i<topics.size();i++){
+                            AskeyIoTService.getInstance(context).subscribeGetShadowMqtt(topics.get(i));
+                            AskeyIoTService.getInstance(context).subscribeMqttDelta(topics.get(i));
+                        }
+                        serviceCallback.onMqttServiceConnectedSuccess();
+                    }
+
+                    @Override
+                    public void unConnected(AWSIotMqttClientStatusCallback.AWSIotMqttClientStatus status) {}
+                });
+            }
+
+            @Override
+            public void onMqttServiceConnectedError() {
+                Toast.makeText(context, "MqttService create error.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**
@@ -76,18 +109,9 @@ public class AskeyIoTService {
         }
     }
 
-//    public void connectToAWSIot(String cert, String pk, MqttConnectionCallback callback){
-//        if(mqttService != null && mqttService.isMqttManagerConfig()){
-//            mqttService.mqttManageConnect(cert, pk, callback);
-//        }
-//    }
-
-    public void connectToAWSIot(String cert, String pk, MqttConnectionCallback callback){
-        connectToAWSIot("", cert, pk, callback);
-    }
-
     public void connectToAWSIot(String userName, String cert, String pk, MqttConnectionCallback callback){
         if(mqttService != null && mqttService.isMqttManagerConfig()){
+            Log.e("ia4test", "connectToAWSIot if enter");
             mqttService.mqttManageConnect(userName, cert, pk, callback);
         }
     }
@@ -156,6 +180,22 @@ public class AskeyIoTService {
         }
     }
 
+    public void subscribeGetShadowMqtt(String topic){
+        if(!topic.contains("/get")){
+            String shadowTopic = topic.substring(0, topic.indexOf("/shadow")+(new String("/shadow").length()));
+            topic = shadowTopic+"/get/accepted";
+        }
+        Log.e("ia4test", "get accept: "+topic);
+        if(mqttService.isMqttManagerConnected()){
+            mqttService.subscribeMqttTopic(topic);
+            Log.d(this.getClass().getName(), "mqtt subscribe success.");
+        }
+        else{
+            Log.e(this.getClass().getName(), "mqtt manager not connected.");
+            throw new IllegalArgumentException("mqtt manager not connected.");
+        }
+    }
+
     /**
      * Subscribe IoT thing to MQTT manager.<br/>
      * Subscribe delta is means, when data is different between "desired" tag and "reported" tag,
@@ -169,21 +209,21 @@ public class AskeyIoTService {
         subscribeMqtt(topic);
     }
 
-    /**
-     * Read IoT thing shadow by using endpoint.<br/>
-     * ReadThingShadowCallback must return length zero's string when this thing is no shadow.<br/>
-     * <br/>
-     * Because read shadow is using https protocol, so it's needn't to connecting MqttService.
-     * @param endpoint aws iot thing endpoint.
-     * @param thingName aws iot thing name.
-     * @param readThingShadowCallback 取得資料回來後, 接收的 callback
-     */
-    public void readThingShadow(String endpoint, String thingName, ReadThingShadowCallback readThingShadowCallback) {
-        if(ServicePreference.isCredentialsParamsExist(context)){
-            ReadThingShadowTask task = new ReadThingShadowTask(context);
-            task.setReadThingShadowCallback(readThingShadowCallback);
-            task.execute(endpoint, thingName);
+
+//    public void readThingShadow(String endpoint, String thingName, ReadThingShadowCallback readThingShadowCallback) {
+//        if(ServicePreference.isCredentialsParamsExist(context)){
+//            ReadThingShadowTask task = new ReadThingShadowTask(context);
+//            task.setReadThingShadowCallback(readThingShadowCallback);
+//            task.execute(endpoint, thingName);
+//        }
+//    }
+
+    public void readThingShadow(String topic){
+        if(!topic.contains("/get")){
+            String shadowTopic = topic.substring(0, topic.indexOf("/shadow")+(new String("/shadow").length()));
+            topic = shadowTopic+"/get";
         }
+        mqttService.publishGetShodowMqtt(topic);
     }
 
     public MqttService getMqttService() {

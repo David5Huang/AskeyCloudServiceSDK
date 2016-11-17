@@ -20,7 +20,13 @@ public class MqttChangedReceiver extends BroadcastReceiver{
         Log.e("ia4test", "mqtt receive");
         if(intent != null){
             if(intent.getAction().equals(MqttActionConst.MQTT_RECEIVER_MESSAGE_ACTION)){
+                Log.e("ia4test", "mqtt receive");
                 String msg = intent.getStringExtra(MqttActionConst.MQTT_RECEIVER_MESSAGE_DATA_TAG);
+                sendNotifi(context, msg);
+            }
+            else if(intent.getAction().equals(MqttActionConst.MQTT_GET_SHADOW_ACTION)){
+                Log.e("ia4test", "mqtt get");
+                String msg = intent.getStringExtra(MqttActionConst.MQTT_GET_SHADOW_DATA_TAG);
                 sendNotifi(context, msg);
             }
         }

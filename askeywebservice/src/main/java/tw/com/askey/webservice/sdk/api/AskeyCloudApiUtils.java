@@ -20,6 +20,9 @@ import tw.com.askey.webservice.sdk.api.response.GetLongTokenResponse;
 import tw.com.askey.webservice.sdk.api.response.GetUserResponse;
 import tw.com.askey.webservice.sdk.api.response.UpdateDeviceInfoResponse;
 import tw.com.askey.webservice.sdk.api.response.UserDeviceListResponse;
+import tw.com.askey.webservice.sdk.api.response.auth.AWSIoTCertResponse;
+import tw.com.askey.webservice.sdk.api.response.device.IoTDeviceInfoResponse;
+import tw.com.askey.webservice.sdk.api.response.device.UserIoTDeviceListResponse;
 
 /**
  * Created by david5_huang on 2016/7/27.<br/>
@@ -69,21 +72,25 @@ public class AskeyCloudApiUtils extends BaseApiUtils {
         return parseJson(doApi(response), AccountUserResponse.class);
     }
 
+    @Deprecated
     public GetKeypairResponse getKeypair(GetKeypairRequest request){
         Call<String> response = webService.getKeyPair(convertRequestToJsonString(request));
         return parseJson(doApi(response), GetKeypairResponse.class);
     }
 
+    @Deprecated
     public GetCertResponse getCert(String userId){
         Call<String> response = webService.getCert(userId);
         return parseJson(doApi(response), GetCertResponse.class);
     }
 
+    @Deprecated
     public DeviceInfoResponse activeDevice(ActiveDeviceRequest request){
         Call<String> response = webService.activeDevice(convertRequestToJsonString(request));
         return parseJson(doApi(response), DeviceInfoResponse.class);
     }
 
+    @Deprecated
     public DeviceInfoResponse getDeviceInfo(String userid, String module, String uniqueid){
         Call<String> response = webService.getDeviceInfo(userid, module, uniqueid);
         return parseJson(doApi(response), DeviceInfoResponse.class);
@@ -94,6 +101,7 @@ public class AskeyCloudApiUtils extends BaseApiUtils {
         return parseJson(doApi(response), UpdateDeviceInfoResponse.class);
     }
 
+    @Deprecated
     public UserDeviceListResponse userDeviceList(String userId){
         Call<String> response = webService.getUserDeviceList(userId);
         return parseJson(doApi(response), UserDeviceListResponse.class);
@@ -107,6 +115,26 @@ public class AskeyCloudApiUtils extends BaseApiUtils {
     public GetDeviceDetailResponse getDeviceDetailInfo(String deviceId){
         Call<String> response = webService.getDeviceDetailInfo(deviceId);
         return parseJson(doApi(response), GetDeviceDetailResponse.class);
+    }
+
+    public AWSIoTCertResponse awsIoTCert(String userId){
+        Call<String> response = webService.getIoTCert(userId);
+        return parseJson(doApi(response), AWSIoTCertResponse.class);
+    }
+
+    public IoTDeviceInfoResponse createIoTDevice(ActiveDeviceRequest request){
+        Call<String> response = webService.createIoTDevice(convertRequestToJsonString(request));
+        return parseJson(doApi(response), IoTDeviceInfoResponse.class);
+    }
+
+    public IoTDeviceInfoResponse lookupIoTDevice(String userId, String model, String uniqueId){
+        Call<String> response = webService.lookupIoTDeviceInfo(userId, model, uniqueId);
+        return parseJson(doApi(response), IoTDeviceInfoResponse.class);
+    }
+
+    public UserIoTDeviceListResponse userIoTDeviceList(String userId){
+        Call<String> response = webService.userIoTDeviceList(userId);
+        return parseJson(doApi(response), UserIoTDeviceListResponse.class);
     }
 
 }

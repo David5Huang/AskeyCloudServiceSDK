@@ -4,12 +4,13 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import tw.com.askey.webservice.sdk.helper.LoginHelper;
-import tw.com.askey.webservice.sdk.model.CognitoDataModel;
+import tw.com.askey.webservice.sdk.model.auth.BasicUserDataModel;
+import tw.com.askey.webservice.sdk.model.auth.CognitoDataModel;
 
 /**
  * Created by david5_huang on 2016/7/5.
  */
-public class GetCognitoInfoTask extends AsyncTask<Void, Integer, CognitoDataModel> {
+public class GettingUserInfoTask extends AsyncTask<Void, Integer, BasicUserDataModel> {
 
     private final Context context;
 
@@ -18,19 +19,20 @@ public class GetCognitoInfoTask extends AsyncTask<Void, Integer, CognitoDataMode
 
     protected LoginHelper loginHelper;
 
-    public GetCognitoInfoTask(Context context, LoginHelper loginHelper) {
+    public GettingUserInfoTask(Context context, LoginHelper loginHelper) {
         this.context = context;
         this.loginHelper = loginHelper;
     }
 
     @Override
-    protected CognitoDataModel doInBackground(Void... params) {
-        CognitoDataModel dataModel = loginHelper.activeCognitoDataModel();
+    protected BasicUserDataModel doInBackground(Void... params) {
+//        CognitoDataModel dataModel = (CognitoDataModel) loginHelper.activeUserDataModel();
+        BasicUserDataModel dataModel = loginHelper.activeUserDataModel();
         return dataModel;
     }
 
     @Override
-    protected void onPostExecute(CognitoDataModel cognitoDataModel) {
+    protected void onPostExecute(BasicUserDataModel cognitoDataModel) {
         super.onPostExecute(cognitoDataModel);
         if(callback == null){
             return;

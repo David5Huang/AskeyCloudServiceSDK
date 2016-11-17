@@ -2,7 +2,6 @@ package com.askey.qbee.client.activity;
 
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,35 +11,22 @@ import android.widget.Toast;
 
 import com.amazonaws.mobileconnectors.iot.AWSIotMqttClientStatusCallback;
 import com.askey.qbee.client.R;
-import com.askey.qbee.client.activity.extra.CameraLaunchHelper;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
-import com.facebook.FacebookDialog;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.share.model.AppInviteContent;
-import com.facebook.share.model.ShareContent;
-import com.facebook.share.model.ShareHashtag;
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.AppInviteDialog;
-import com.facebook.share.widget.MessageDialog;
-import com.facebook.share.widget.ShareDialog;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import tw.com.askey.ia4test.MqttChangedReceiver;
-import tw.com.askey.ia4test.QueryDeviceInfoTask;
 import tw.com.askey.ia4test.TestConst;
 import tw.com.askey.webservice.sdk.ServiceConst;
 import tw.com.askey.webservice.sdk.api.AskeyCloudApiUtils;
@@ -50,13 +36,13 @@ import tw.com.askey.webservice.sdk.api.builder.GetKeypairRequestBuilder;
 import tw.com.askey.webservice.sdk.api.builder.UpdateDeviceInfoRequestBuilder;
 import tw.com.askey.webservice.sdk.api.builder.auth.LoginUserBuilder;
 import tw.com.askey.webservice.sdk.api.builder.auth.RegisterUserBuilder;
-import tw.com.askey.webservice.sdk.api.response.DeviceInfoResponse;
-import tw.com.askey.webservice.sdk.api.response.GetCertResponse;
 import tw.com.askey.webservice.sdk.api.response.GetDeviceBasicInfoResponse;
 import tw.com.askey.webservice.sdk.api.response.GetDeviceDetailResponse;
 import tw.com.askey.webservice.sdk.api.response.GetKeypairResponse;
-import tw.com.askey.webservice.sdk.api.response.UserDeviceListResponse;
 import tw.com.askey.webservice.sdk.api.response.auth.AccountUserResponse;
+import tw.com.askey.webservice.sdk.api.response.auth.AWSIoTCertResponse;
+import tw.com.askey.webservice.sdk.api.response.device.IoTDeviceInfoResponse;
+import tw.com.askey.webservice.sdk.api.response.device.UserIoTDeviceListResponse;
 import tw.com.askey.webservice.sdk.iot.AskeyIoTUtils;
 import tw.com.askey.webservice.sdk.iot.MqttActionConst;
 import tw.com.askey.webservice.sdk.iot.callback.MqttConnectionCallback;
@@ -66,11 +52,12 @@ import tw.com.askey.webservice.sdk.iot.message.builder.MqttDesiredBuilder;
 import tw.com.askey.webservice.sdk.iot.message.builder.MqttMsgBuilder;
 import tw.com.askey.webservice.sdk.iot.message.builder.MqttReportedJStrBuilder;
 import tw.com.askey.webservice.sdk.iot.message.builder.MqttStatesMsgBuilder;
-import tw.com.askey.webservice.sdk.model.CognitoDataModel;
+import tw.com.askey.webservice.sdk.model.auth.CognitoDataModel;
 import tw.com.askey.webservice.sdk.model.ServicePreference;
 import tw.com.askey.webservice.sdk.service.AskeyIoTService;
 import tw.com.askey.webservice.sdk.service.AskeyWebService;
-import tw.com.askey.webservice.sdk.setting.FacebookLoginSource;
+import tw.com.askey.webservice.sdk.service.device.AskeyIoTDeviceService;
+import tw.com.askey.webservice.sdk.setting.auth.FacebookLoginSource;
 import tw.com.askey.webservice.sdk.task.ServiceCallback;
 
 /**
@@ -81,12 +68,23 @@ import tw.com.askey.webservice.sdk.task.ServiceCallback;
  * 4. 連接mqtt manager
  * 5. publish message
  */
+/**
+ * 2016/11/17
+ * 使用email註冊/登入的sample流程如下:
+ * 1. 註冊/登入新的User(參數在app module的TestConst.java)
+ * 2. 取得certificate(cert test的button)
+ * 3. 新增/詢問指定的IoT thing(參數在app module的TestConst.java)
+ * 4. 連接mqtt manager
+ * 5. publish message
+ */
 public class MasterTestActivity extends AppCompatActivity implements View.OnClickListener, ServiceCallback, MqttServiceConnectedCallback, ReadThingShadowCallback, TestConst {
 
     CallbackManager callbackManager;
     String testDeviceId;
 
-    DeviceInfoResponse deviceInfoResponse;
+//    DeviceInfoResponse deviceInfoResponse;
+
+    IoTDeviceInfoResponse ioTDeviceInfoResponse;
 
     FacebookLoginSource loginSource;
 
@@ -94,6 +92,8 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
     String pk;
 
     String fbName;
+
+    AccountUserResponse nowUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +139,7 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
 
         MqttChangedReceiver receiver = new MqttChangedReceiver();
         IntentFilter filter = new IntentFilter(MqttActionConst.MQTT_RECEIVER_MESSAGE_ACTION);
+        filter.addAction(MqttActionConst.MQTT_GET_SHADOW_ACTION);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
     }
@@ -159,14 +160,19 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    UserDeviceListResponse response = AskeyCloudApiUtils.getInstance(ServiceConst.API_URL).
-                            userDeviceList(ServicePreference.getCognitoDataFromPreference(MasterTestActivity.this).getUserID());
-                    if(response != null){
-                        List<String> devices = response.getDevices();
-                        for(int i=0;i<devices.size();i++){
-                            Log.e("ia4test", devices.get(i));
-                        }
-                    }
+//                    UserDeviceListResponse response = AskeyCloudApiUtils.getInstance(ServiceConst.API_URL).
+//                            userDeviceList(ServicePreference.getCognitoDataFromPreference(MasterTestActivity.this).getUserID());
+//                    if(response != null){
+//                        List<String> devices = response.getDevices();
+//                        for(int i=0;i<devices.size();i++){
+//                            Log.e("ia4test", devices.get(i));
+//                        }
+//                    }
+
+                    UserIoTDeviceListResponse response = AskeyIoTDeviceService.getInstance(MasterTestActivity.this).userIoTDeviceList(nowUser.getUserid());
+                    Log.e("ia4test", "list size: "+response.getDevices().size());
+                    Log.e("ia4test", "first id: "+response.getDevices().get(0).getDeviceid());
+
                 }
             }).start();
         }
@@ -184,10 +190,10 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
 //                    activeDeviceRequest.setPrincipal(model.getIdentityID());
 //                    iotClient.attachPrincipalPolicy(activeDeviceRequest);
 
-                    if(deviceInfoResponse != null){
+                    if(ioTDeviceInfoResponse != null){
                         AskeyIoTService.getInstance(getApplicationContext())
                                 .configAWSIot(
-                                        AskeyIoTUtils.translatMqttUseEndpoint(deviceInfoResponse.getDevice().getRestEndpoint()),
+                                        AskeyIoTUtils.translatMqttUseEndpoint(ioTDeviceInfoResponse.getRestEndpoint()),
                                         MasterTestActivity.this);
                     }
                 }
@@ -198,7 +204,7 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    AskeyIoTService.getInstance(getApplicationContext()).publishDesiredMessage(deviceInfoResponse.getDevice().getShadowTopic(), buildTestDesiredMqttMsg());
+                    AskeyIoTService.getInstance(getApplicationContext()).publishDesiredMessage(ioTDeviceInfoResponse.getShadowTopic(), buildTestDesiredMqttMsg());
                 }
             }).start();
         }
@@ -207,43 +213,49 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
                 @Override
                 public void run() {
                     AskeyIoTService.getInstance(getApplicationContext()).publishReportedMessage(
-                            deviceInfoResponse.getDevice().getShadowTopic(),
+                            ioTDeviceInfoResponse.getShadowTopic(),
                             buildTestReportedMqttMsg()
                     );
                 }
             }).start();
         }
         else if(view.getId() == R.id.ia4_test_get_shadow_btn){
-            AskeyIoTService.getInstance(getApplicationContext()).readThingShadow(
-                    AskeyIoTUtils.translatMqttUseEndpoint(deviceInfoResponse.getDevice().getRestEndpoint()),
-                    deviceInfoResponse.getDevice().getIotThingname(), this);
+//            AskeyIoTService.getInstance(getApplicationContext()).readThingShadow(
+//                    AskeyIoTUtils.translatMqttUseEndpoint(ioTDeviceInfoResponse.getRestEndpoint()),
+//                    ioTDeviceInfoResponse.getIotThingname(), this);
+
+            AskeyIoTService.getInstance(getApplicationContext()).readThingShadow(ioTDeviceInfoResponse.getShadowTopic());
+
+//            AskeyIoTService.getInstance(getApplicationContext()).readThingShadow(
+//                    ioTDeviceInfoResponse.getShadowTopic(), new MqttGetShadowBuilder(ioTDeviceInfoResponse.getDeviceid()));
+
         }
         else if(view.getId() == R.id.ia4_test_device_info_btn){
-            getDeviceInfoTest(ServicePreference.getCognitoDataFromPreference(this).getUserID(),
+            getDeviceInfoTest(nowUser.getUserid(),
                     TEST_MODULE,
                     TEST_UNIQUEID
-                    );
+            );
         }
         else if(view.getId() == R.id.ia4_test_change_name_btn){
             updateDeviceNameTest(testDeviceId, "New Camera Name");
         }
         else if(view.getId() == R.id.ia4_test_device_basic_info_btn){
-            if(deviceInfoResponse != null && deviceInfoResponse.getDevice() != null){
+            if(ioTDeviceInfoResponse != null){
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        GetDeviceBasicInfoResponse response = AskeyCloudApiUtils.getInstance(ServiceConst.API_URL).getDeviceBasicInfo(deviceInfoResponse.getDevice().getDeviceid());
+                        GetDeviceBasicInfoResponse response = AskeyCloudApiUtils.getInstance(ServiceConst.API_URL).getDeviceBasicInfo(ioTDeviceInfoResponse.getDeviceid());
                         Log.e("ia4test", response.getDevice().getIotThingname());
                     }
                 }).start();
             }
         }
         else if(view.getId() == R.id.ia4_test_device_detail_info_btn){
-            if(deviceInfoResponse != null && deviceInfoResponse.getDevice() != null){
+            if(ioTDeviceInfoResponse != null){
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        GetDeviceDetailResponse response = AskeyCloudApiUtils.getInstance(ServiceConst.API_URL).getDeviceDetailInfo(deviceInfoResponse.getDevice().getDeviceid());
+                        GetDeviceDetailResponse response = AskeyCloudApiUtils.getInstance(ServiceConst.API_URL).getDeviceDetailInfo(ioTDeviceInfoResponse.getDeviceid());
                         Log.e("ia4test", (String)response.getDevice().getDeviceDetails().get("macaddress"));
                     }
                 }).start();
@@ -254,7 +266,7 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
                 @Override
                 public void run() {
                     AskeyIoTService.getInstance(getApplicationContext()).publishStatesMqttMessage(
-                            deviceInfoResponse.getDevice().getShadowTopic(),
+                            ioTDeviceInfoResponse.getShadowTopic(),
                             buildTestStatesMqttMsg());
                 }
             }).start();
@@ -263,11 +275,20 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    GetCertResponse response = AskeyCloudApiUtils.getInstance(ServiceConst.API_URL).getCert(
-                            ServicePreference.getCognitoDataFromPreference(MasterTestActivity.this).getUserID()
-                    );
+//                    GetCertResponse response = AskeyCloudApiUtils.getInstance(ServiceConst.API_URL).getCert(
+//                            ServicePreference.getCognitoDataFromPreference(MasterTestActivity.this).getUserID()
+//                    );
+//                    Log.e("ia4test", response.getCertificatePem());
+
+                    AWSIoTCertResponse response = AskeyIoTDeviceService.
+                            getInstance(MasterTestActivity.this).getIotCert(nowUser.getUserid());
+
                     Log.e("ia4test", response.getCertificatePem());
+                    Log.e("ia4test", response.getPrivateKey());
+
                     cert = response.getCertificatePem();
+                    pk = response.getPrivateKey();
+                    fbName = TestConst.TEST_NAME;
                 }
             }).start();
         }
@@ -301,8 +322,8 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
                             TEST_PWD,
                             TEST_NAME
                     );
-                    AccountUserResponse response = AskeyWebService.getInstance(MasterTestActivity.this).registerUser(builder);
-                    Log.e("ia4test", "Register result: "+response.getUserid()+", "+response.getToken());
+                    nowUser = AskeyWebService.getInstance(MasterTestActivity.this).registerUser(builder);
+                    Log.e("ia4test", "Register result: "+nowUser.getUserid()+", "+nowUser.getToken());
                 }
             }).start();
         }
@@ -314,8 +335,8 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
                             TEST_EMAIL,
                             TEST_PWD
                     );
-                    AccountUserResponse response = AskeyWebService.getInstance(MasterTestActivity.this).loginUser(builder);
-                    Log.e("ia4test", "Login result: "+response.getUserid()+", "+response.getToken());
+                    nowUser = AskeyWebService.getInstance(MasterTestActivity.this).loginUser(builder);
+                    Log.e("ia4test", "Login result: "+nowUser.getUserid()+", "+nowUser.getToken());
                 }
             }).start();
         }
@@ -444,7 +465,7 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
     }
 
     private MqttMsgBuilder buildTestDesiredMqttMsg(){
-        MqttDesiredBuilder builder = new MqttDesiredBuilder(deviceInfoResponse.getDevice().getDeviceid());
+        MqttDesiredBuilder builder = new MqttDesiredBuilder(ioTDeviceInfoResponse.getDeviceid());
         builder.addCommand("temp", "55");
         builder.addCommand("humidity", "60");
 
@@ -463,14 +484,14 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
 //        actMap.put("act02", "test02");
 //        builder.addReportData("act", actMap);
 
-        MqttReportedJStrBuilder builder = new MqttReportedJStrBuilder(deviceInfoResponse.getDevice().getDeviceid());
+        MqttReportedJStrBuilder builder = new MqttReportedJStrBuilder(ioTDeviceInfoResponse.getDeviceid());
         builder.setJsonString("{\"humidity\": \"70\",\"temp\": \"30\",\"act\": {\"act01\": \"test\",\"act02\": \"test02\"}}");
 
         return builder;
     }
 
     private MqttMsgBuilder buildTestStatesMqttMsg(){
-        MqttStatesMsgBuilder builder = new MqttStatesMsgBuilder(deviceInfoResponse.getDevice().getDeviceid());
+        MqttStatesMsgBuilder builder = new MqttStatesMsgBuilder(ioTDeviceInfoResponse.getDeviceid());
         builder.addDesired("temp", "30");
         builder.addDesired("humidity", "70");
         builder.addReported("temp", "20");
@@ -489,10 +510,10 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
             Log.e("ia4test", model.getUserID());
             Toast.makeText(this, "active aws success", Toast.LENGTH_SHORT).show();
         }
-        else if(tag.equals(QueryDeviceInfoTask.class.getName())){
-            deviceInfoResponse = (DeviceInfoResponse) result;
-            Log.e("ia4test", "Get device info response.");
-        }
+//        else if(tag.equals(QueryDeviceInfoTask.class.getName())){
+//            deviceInfoResponse = (DeviceInfoResponse) result;
+//            Log.e("ia4test", "Get device info response.");
+//        }
     }
 
     @Override
@@ -511,12 +532,13 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
     public void onMqttServiceConnectedSuccess() {
 
         Log.e("ia4test", "bind success");
-        AskeyIoTService.getInstance(getApplicationContext()).connectToAWSIot(fbName, cert, pk, new MqttConnectionCallback() {
+        AskeyIoTService.getInstance(getApplicationContext()).connectToAWSIot(fbName+"_2", cert, pk, new MqttConnectionCallback() {
             @Override
             public void onConnected() {
 
-                if(deviceInfoResponse != null && deviceInfoResponse.getDevice() != null){
-                    AskeyIoTService.getInstance(getApplicationContext()).subscribeMqttDelta(deviceInfoResponse.getDevice().getShadowTopic());
+                if(ioTDeviceInfoResponse != null){
+                    AskeyIoTService.getInstance(getApplicationContext()).subscribeGetShadowMqtt(ioTDeviceInfoResponse.getShadowTopic());
+                    AskeyIoTService.getInstance(getApplicationContext()).subscribeMqttDelta(ioTDeviceInfoResponse.getShadowTopic());
 //                    AskeyIoTService.getInstance(getApplicationContext()).subscribeMqtt(deviceInfoResponse.getDevice().getShadowTopic());
                 }
 
@@ -553,7 +575,7 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
 
     //目前上面的是測試資料, 使用時請填上正式資料
     private void getDeviceInfoTest(final String userid, final String module, final String uniqueid){
-        ActiveDeviceRequestBuilder builder = new ActiveDeviceRequestBuilder(
+        final ActiveDeviceRequestBuilder builder = new ActiveDeviceRequestBuilder(
                 userid,
                 module,
                 uniqueid,
@@ -562,9 +584,34 @@ public class MasterTestActivity extends AppCompatActivity implements View.OnClic
 
         HashMap<String, String> details = new HashMap<>();
         details.put("macaddress", "FCB4E6CC179A");
-        QueryDeviceInfoTask task = new QueryDeviceInfoTask();
-        task.setServiceCallback(this);
-        task.execute(builder);
+//        QueryDeviceInfoTask task = new QueryDeviceInfoTask();
+//        task.setServiceCallback(this);
+//        task.execute(builder);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                ioTDeviceInfoResponse = AskeyIoTDeviceService.
+                        getInstance(MasterTestActivity.this).lookupIoTDevice(nowUser.getUserid(), TestConst.TEST_MODULE, TestConst.TEST_UNIQUEID);
+
+                if(ioTDeviceInfoResponse != null && ioTDeviceInfoResponse.getDeviceid() != null){
+//                    Log.e("ia4test", "code: "+ioTDeviceInfoResponse.getCode()+", message: "+ioTDeviceInfoResponse.getMessage());
+
+                    Log.e("ia4test", "device id: "+ ioTDeviceInfoResponse.getDeviceid());
+                }
+                else{
+
+                    ioTDeviceInfoResponse = AskeyIoTDeviceService.getInstance(MasterTestActivity.this).createIoTDevice(builder.getActiveDeviceRequest());
+
+                    Log.e("ia4Test", nowUser.getUserid()+", "+TestConst.TEST_MODULE+", "+TEST_UNIQUEID);
+                    Log.e("ia4test", "lookup device id: "+ ioTDeviceInfoResponse.getDeviceid());
+
+                }
+            }
+        }).start();
+
+
     }
 
     private void updateDeviceNameTest(final String deviceid, final String name){

@@ -20,7 +20,7 @@ import java.util.UUID;
 
 import tw.com.askey.webservice.sdk.iot.callback.MqttConnectionCallback;
 import tw.com.askey.webservice.sdk.iot.helper.IotKeyHelper;
-import tw.com.askey.webservice.sdk.model.CognitoDataModel;
+import tw.com.askey.webservice.sdk.model.auth.CognitoDataModel;
 import tw.com.askey.webservice.sdk.model.ServicePreference;
 import tw.com.askey.webservice.sdk.model.MqttUseCredentialsProvider;
 
@@ -33,6 +33,8 @@ public class MqttService extends Service implements AWSIotMqttClientStatusCallba
     private static MqttService instance;
 
     protected AWSIotMqttManager mqttManager;
+    protected AWSIotMqttManager readMqttManager;
+
     private final IBinder serviceBinder = new MqttServiceBinder();
 
     private boolean isMqttManagerConnected;
@@ -63,6 +65,7 @@ public class MqttService extends Service implements AWSIotMqttClientStatusCallba
     public void onDestroy() {
         super.onDestroy();
         mqttManager.disconnect();
+//        readMqttManager.disconnect();
     }
 
     @Nullable
@@ -106,9 +109,19 @@ public class MqttService extends Service implements AWSIotMqttClientStatusCallba
     @Override
     public void onMessageArrived(String topic, byte[] data) {
         try {
-            Intent sendIntent = new Intent(MqttActionConst.MQTT_RECEIVER_MESSAGE_ACTION);
-            sendIntent.putExtra(MqttActionConst.MQTT_RECEIVER_MESSAGE_DATA_TAG, new String(data, "UTF-8"));
-            LocalBroadcastManager.getInstance(this).sendBroadcast(sendIntent);
+            Log.e(TAG, "topic: "+topic);
+            if(topic.contains("/get")){
+                Log.e(TAG, "get");
+                Intent sendIntent = new Intent(MqttActionConst.MQTT_GET_SHADOW_ACTION);
+                sendIntent.putExtra(MqttActionConst.MQTT_GET_SHADOW_DATA_TAG, new String(data, "UTF-8"));
+                LocalBroadcastManager.getInstance(this).sendBroadcast(sendIntent);
+            }
+            else{
+                Log.e(TAG, "receive");
+                Intent sendIntent = new Intent(MqttActionConst.MQTT_RECEIVER_MESSAGE_ACTION);
+                sendIntent.putExtra(MqttActionConst.MQTT_RECEIVER_MESSAGE_DATA_TAG, new String(data, "UTF-8"));
+                LocalBroadcastManager.getInstance(this).sendBroadcast(sendIntent);
+            }
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -117,10 +130,10 @@ public class MqttService extends Service implements AWSIotMqttClientStatusCallba
 
 
     public boolean configMqttManager(String endpoint) {
-        if(!ServicePreference.isCredentialsParamsExist(this)){
-            isMqttManagerConfig = false;
-            return false;
-        }
+//        if(!ServicePreference.isCredentialsParamsExist(this)){
+//            isMqttManagerConfig = false;
+//            return false;
+//        }
         if(mqttManager == null){
             String clientId = UUID.randomUUID().toString();
             mqttManager = new AWSIotMqttManager(clientId, endpoint);
@@ -136,6 +149,12 @@ public class MqttService extends Service implements AWSIotMqttClientStatusCallba
             return true;
         }
     }
+
+//    protected void initMqttManager(){
+//        if(mqttManager == null || readMqttManager == null){
+//            String clientId = UUID.randomUUID().toString();
+//        }
+//    }
 
     public void mqttManageConnect(MqttConnectionCallback connectionCallback) {
         CognitoDataModel dataModel = ServicePreference.getCognitoDataFromPreference(this);
@@ -175,6 +194,15 @@ public class MqttService extends Service implements AWSIotMqttClientStatusCallba
             @Override
             public void run() {
                 mqttManager.publishString(message, topic, AWSIotMqttQos.QOS0);
+            }
+        }).start();
+    }
+
+    public void publishGetShodowMqtt(final String topic){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mqttManager.publishString("", topic, AWSIotMqttQos.QOS0);
             }
         }).start();
     }

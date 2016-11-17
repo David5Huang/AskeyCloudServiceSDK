@@ -13,6 +13,7 @@ import tw.com.askey.webservice.sdk.api.response.DeviceInfoResponse;
 public class GetDeviceInfoHelper {
 
     public static DeviceInfoResponse actHelper(ActiveDeviceRequestBuilder builder){
+
         DeviceInfoResponse response = AskeyCloudApiUtils.getInstance(ServiceConst.API_URL).getDeviceInfo(
                 builder.getActiveDeviceRequest().getUserid(),
                 builder.getActiveDeviceRequest().getDevice().getModel(),

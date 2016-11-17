@@ -86,7 +86,8 @@ public class ThingTestHelper implements TestConst, ReadThingShadowCallback {
         if(service == null){
             return;
         }
-        AskeyIoTService.getInstance(context).readThingShadow(endpoint, thingName, callback);
+//        AskeyIoTService.getInstance(context).readThingShadow(endpoint, thingName, callback);
+//        AskeyIoTService.getInstance(context).readThingShadow();
     }
 
     public MqttMsgBuilder getTestDesiredMsgBuilder(){

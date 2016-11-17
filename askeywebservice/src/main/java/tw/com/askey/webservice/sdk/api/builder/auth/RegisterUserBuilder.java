@@ -1,5 +1,8 @@
 package tw.com.askey.webservice.sdk.api.builder.auth;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import tw.com.askey.webservice.sdk.api.request.auth.RegisterUserRequest;
 
 /**
@@ -11,6 +14,8 @@ public class RegisterUserBuilder extends BaseAuthBuilder {
     private String passcode;
     private String displayName;
     private String OTP;
+
+    private HashMap<String, String> customParams;
 
     public RegisterUserBuilder(String email, String password, String displayName){
         this.email = email;
@@ -35,7 +40,30 @@ public class RegisterUserBuilder extends BaseAuthBuilder {
         if(OTP != null && !OTP.isEmpty()){
             request.setOTP(OTP);
         }
+        if(isUseCustomParams()){
+            ArrayList<String> keys = new ArrayList<>(customParams.keySet());
+            for(int i=0;i<keys.size();i++){
+                request.setAdditionalProperty(keys.get(i), customParams.get(keys.get(i)));
+            }
+        }
         return request;
+    }
+
+    public void inputCustomParams(String key, String value){
+        if(customParams == null){
+            customParams = new HashMap<>();
+        }
+        customParams.put(key, value);
+    }
+
+    public boolean isUseCustomParams(){
+        if(customParams == null){
+            return false;
+        }
+        else if(customParams.isEmpty()){
+            return false;
+        }
+        return true;
     }
 
     public String getEmail() {

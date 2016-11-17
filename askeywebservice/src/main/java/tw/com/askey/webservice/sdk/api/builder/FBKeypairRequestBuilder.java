@@ -1,10 +1,7 @@
 package tw.com.askey.webservice.sdk.api.builder;
 
-import android.util.Log;
-
 import tw.com.askey.webservice.sdk.api.request.GetKeypairRequest;
-import tw.com.askey.webservice.sdk.setting.FacebookLoginSource;
-import tw.com.askey.webservice.sdk.setting.LoginSource;
+import tw.com.askey.webservice.sdk.setting.auth.FacebookLoginSource;
 
 /**
  * Created by david5_huang on 2016/8/22.

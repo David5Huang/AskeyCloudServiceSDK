@@ -11,9 +11,10 @@ import tw.com.askey.webservice.sdk.api.request.GetLongTokenRequest;
 import tw.com.askey.webservice.sdk.api.response.AddUserResponse;
 import tw.com.askey.webservice.sdk.api.response.GetLongTokenResponse;
 import tw.com.askey.webservice.sdk.api.response.GetUserResponse;
-import tw.com.askey.webservice.sdk.model.CognitoDataModel;
-import tw.com.askey.webservice.sdk.setting.FacebookLoginSource;
-import tw.com.askey.webservice.sdk.setting.LoginSource;
+import tw.com.askey.webservice.sdk.model.auth.BasicUserDataModel;
+import tw.com.askey.webservice.sdk.model.auth.CognitoDataModel;
+import tw.com.askey.webservice.sdk.setting.auth.FacebookLoginSource;
+import tw.com.askey.webservice.sdk.setting.auth.LoginSource;
 
 /**
  * Created by david5_huang on 2016/8/23.
@@ -25,7 +26,7 @@ public class FacebookLoginHelper extends LoginHelper {
     }
 
     @Override
-    public CognitoDataModel activeCognitoDataModel() {
+    public CognitoDataModel activeUserDataModel() {
         try {
             CognitoDataModel dataModel = new CognitoDataModel();
 
@@ -33,7 +34,7 @@ public class FacebookLoginHelper extends LoginHelper {
 
             combineCognitoDataModel(result, dataModel);
 
-            updateAWSData(dataModel);
+            updateUserData(dataModel);
             return dataModel;
         } catch (Exception e){
             Log.e(getClass().getName(), e.getMessage());
@@ -42,27 +43,28 @@ public class FacebookLoginHelper extends LoginHelper {
     }
 
     @Override
-    public GetCredentialsForIdentityResult actGetCredentialsForIdentityResult(LoginSource loginSource, CognitoDataModel dataModel) {
+    public GetCredentialsForIdentityResult actGetCredentialsForIdentityResult(LoginSource loginSource, BasicUserDataModel dataModel) {
+
         GetCredentialsForIdentityResult result = null;
         GetUserResponse userResponse = checkUser(loginSource);
         if(userResponse == null || userResponse.getUser() == null){
             AddUserResponse addUserResponse = queryAddUserApi(loginSource);
             if(addUserResponse != null){
 
-                dataModel.setIdentityID(addUserResponse.getUser().getCognitoidentityid());
+                ((CognitoDataModel)dataModel).setIdentityID(addUserResponse.getUser().getCognitoidentityid());
                 dataModel.setUserID(addUserResponse.getUser().getUserid());
 
-                settingLongTokenToLoginSource(addUserResponse.getUser().getUserid(), loginSource);
+//                settingLongTokenToLoginSource(addUserResponse.getUser().getUserid(), loginSource);
 
                 result = getCredentialsForIdentityResult(loginSource,
                         addUserResponse.getUser().getCognitoidentityid());
             }
         }
         else{
-            dataModel.setIdentityID(userResponse.getUser().getCognitoidentityid());
+            ((CognitoDataModel)dataModel).setIdentityID(userResponse.getUser().getCognitoidentityid());
             dataModel.setUserID(userResponse.getUser().getUserid());
 
-            settingLongTokenToLoginSource(userResponse.getUser().getUserid(), loginSource);
+//            settingLongTokenToLoginSource(userResponse.getUser().getUserid(), loginSource);
 
             result = getCredentialsForIdentityResult(loginSource,
                     userResponse.getUser().getCognitoidentityid());

@@ -13,12 +13,14 @@ import tw.com.askey.webservice.sdk.api.builder.auth.LoginUserBuilder;
 import tw.com.askey.webservice.sdk.api.builder.auth.RegisterUserBuilder;
 import tw.com.askey.webservice.sdk.api.response.auth.AccountUserResponse;
 import tw.com.askey.webservice.sdk.exception.NotDefineException;
+import tw.com.askey.webservice.sdk.helper.EMailLoginHelper;
 import tw.com.askey.webservice.sdk.helper.FacebookLoginHelper;
 import tw.com.askey.webservice.sdk.helper.LoginHelper;
 import tw.com.askey.webservice.sdk.model.ServicePreference;
-import tw.com.askey.webservice.sdk.setting.FacebookLoginSource;
-import tw.com.askey.webservice.sdk.setting.LoginSource;
-import tw.com.askey.webservice.sdk.task.GetCognitoInfoTask;
+import tw.com.askey.webservice.sdk.setting.auth.EMailLoginSource;
+import tw.com.askey.webservice.sdk.setting.auth.FacebookLoginSource;
+import tw.com.askey.webservice.sdk.setting.auth.LoginSource;
+import tw.com.askey.webservice.sdk.task.GettingUserInfoTask;
 import tw.com.askey.webservice.sdk.task.ServiceCallback;
 
 /**
@@ -76,10 +78,7 @@ public class AskeyWebService {
      */
     public void active(FacebookLoginSource loginSource, String tag, ServiceCallback callback) {
         LoginHelper loginHelper = new FacebookLoginHelper(context, loginSource);
-        GetCognitoInfoTask task = new GetCognitoInfoTask(context, loginHelper);
-        task.setCallback(callback);
-        task.setTag(tag);
-        task.execute();
+        activeAction(loginHelper, tag, callback);
     }
 
     /**
@@ -91,6 +90,22 @@ public class AskeyWebService {
      */
     public void active(FacebookLoginSource loginSource, ServiceCallback callback) {
         active(loginSource, null, callback);
+    }
+
+    public void active(EMailLoginSource loginSource, String tag, ServiceCallback callback){
+        LoginHelper loginHelper = new EMailLoginHelper(context, loginSource);
+        activeAction(loginHelper, tag, callback);
+    }
+
+    public void active(EMailLoginSource loginSource, ServiceCallback callback){
+        active(loginSource, null, callback);
+    }
+
+    protected void activeAction(LoginHelper loginHelper, String tag, ServiceCallback callback){
+        GettingUserInfoTask task = new GettingUserInfoTask(context, loginHelper);
+        task.setCallback(callback);
+        task.setTag(tag);
+        task.execute();
     }
 
     public void configSNSSender(String apiKey) throws NotDefineException {

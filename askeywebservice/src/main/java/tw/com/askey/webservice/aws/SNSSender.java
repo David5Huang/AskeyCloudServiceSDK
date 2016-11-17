@@ -27,7 +27,7 @@ public class SNSSender {
         APNS,
         // Sandbox version of Apple Push Notification Service
         APNS_SANDBOX,
-        // Amazon Device Messaging
+        // Amazon UserIoTDevice Messaging
         ADM,
         // Google Cloud Messaging
         GCM

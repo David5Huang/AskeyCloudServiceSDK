@@ -1,7 +1,7 @@
 package tw.com.askey.webservice.sdk.api.builder;
 
 import tw.com.askey.webservice.sdk.api.request.GetKeypairRequest;
-import tw.com.askey.webservice.sdk.setting.LoginSource;
+import tw.com.askey.webservice.sdk.setting.auth.LoginSource;
 
 /**
  * Created by david5_huang on 2016/8/22.

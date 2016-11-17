@@ -11,7 +11,7 @@ import com.amazonaws.services.iotdata.model.GetThingShadowRequest;
 import com.amazonaws.services.iotdata.model.GetThingShadowResult;
 import com.amazonaws.services.iotdata.model.ResourceNotFoundException;
 
-import tw.com.askey.webservice.sdk.model.CognitoDataModel;
+import tw.com.askey.webservice.sdk.model.auth.CognitoDataModel;
 import tw.com.askey.webservice.sdk.model.ServicePreference;
 import tw.com.askey.webservice.sdk.iot.callback.ReadThingShadowCallback;
 

@@ -1,4 +1,4 @@
-package tw.com.askey.webservice.sdk.setting;
+package tw.com.askey.webservice.sdk.setting.auth;
 
 import java.util.Map;
 

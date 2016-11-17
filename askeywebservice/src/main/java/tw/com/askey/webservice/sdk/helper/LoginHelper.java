@@ -13,9 +13,10 @@ import tw.com.askey.webservice.sdk.ServiceConst;
 import tw.com.askey.webservice.sdk.api.AskeyCloudApiUtils;
 import tw.com.askey.webservice.sdk.api.response.AddUserResponse;
 import tw.com.askey.webservice.sdk.api.response.GetUserResponse;
-import tw.com.askey.webservice.sdk.model.CognitoDataModel;
+import tw.com.askey.webservice.sdk.model.auth.BasicUserDataModel;
+import tw.com.askey.webservice.sdk.model.auth.CognitoDataModel;
 import tw.com.askey.webservice.sdk.model.ServicePreference;
-import tw.com.askey.webservice.sdk.setting.LoginSource;
+import tw.com.askey.webservice.sdk.setting.auth.LoginSource;
 
 /**
  * Created by david5_huang on 2016/8/23.
@@ -60,14 +61,13 @@ abstract public class LoginHelper {
         return dataModel;
     }
 
-    protected void updateAWSData(CognitoDataModel dataModel){
+    protected void updateUserData(CognitoDataModel dataModel){
         SharedPreferences preferences = ServicePreference.getServicePreference(context);
         preferences.edit().putString(ServicePreference.AWS_ACCESS_KEY, dataModel.getAccessKey()).commit();
         preferences.edit().putString(ServicePreference.AWS_SECRET_KEY, dataModel.getSecretKey()).commit();
         preferences.edit().putString(ServicePreference.AWS_SESSION_TOKEN, dataModel.getSessionToken()).commit();
         preferences.edit().putString(ServicePreference.AWS_IDENTITY_ID, dataModel.getIdentityID()).commit();
         preferences.edit().putString(ServicePreference.ASKEY_USER_ID, dataModel.getUserID()).commit();
-
     }
 
     public void setLoginSource(LoginSource loginSource) {
@@ -78,6 +78,6 @@ abstract public class LoginHelper {
         return loginSource;
     }
 
-    abstract public CognitoDataModel activeCognitoDataModel();
-    abstract GetCredentialsForIdentityResult actGetCredentialsForIdentityResult(LoginSource loginSource, CognitoDataModel dataModel);
+    abstract public BasicUserDataModel activeUserDataModel();
+    abstract GetCredentialsForIdentityResult actGetCredentialsForIdentityResult(LoginSource loginSource, BasicUserDataModel dataModel);
 }
