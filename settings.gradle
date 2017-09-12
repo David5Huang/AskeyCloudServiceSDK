@@ -1,1 +1,1 @@
-include ':app', ':askeywebservice', ':smarthometest', ':cognitomqtt', ':authapi', ':iotthingtest'
+include ':askeywebservice', ':sdksample', ':authv3test', ':iottest'

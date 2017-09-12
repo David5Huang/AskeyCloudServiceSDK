@@ -3,19 +3,18 @@ package askey.com.tw.iotthingtest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.HashMap;
 
 import tw.com.askey.ia4test.MqttResultActivity;
 import tw.com.askey.ia4test.TestConst;
-import tw.com.askey.webservice.sdk.iot.MqttService;
-import tw.com.askey.webservice.sdk.iot.callback.ReadThingShadowCallback;
-import tw.com.askey.webservice.sdk.iot.message.builder.MqttDesiredBuilder;
-import tw.com.askey.webservice.sdk.iot.message.builder.MqttMsgBuilder;
-import tw.com.askey.webservice.sdk.iot.message.builder.MqttReportedBuilder;
-import tw.com.askey.webservice.sdk.service.AskeyIoTService;
+import com.askeycloud.webservice.sdk.iot.MqttService;
+import com.askeycloud.webservice.sdk.iot.callback.ReadThingShadowCallback;
+import com.askeycloud.webservice.sdk.iot.message.builder.MqttDesiredBuilder;
+import com.askeycloud.webservice.sdk.iot.message.builder.MqttMsgBuilder;
+import com.askeycloud.webservice.sdk.iot.message.builder.MqttReportedBuilder;
+import com.askeycloud.webservice.sdk.service.iot.AskeyIoTService;
 
 /**
  * Created by david5_huang on 2016/8/31.
@@ -30,7 +29,7 @@ public class ThingTestHelper implements TestConst, ReadThingShadowCallback {
     String deviceId;
 
     public ThingTestHelper(Context context){
-        service = MqttService.getInstance();
+        service = MqttService.newInstance();
         this.context = context;
     }
 
@@ -51,6 +50,7 @@ public class ThingTestHelper implements TestConst, ReadThingShadowCallback {
             @Override
             public void run() {
                 AskeyIoTService.getInstance(context).subscribeMqttDelta(topic);
+                AskeyIoTService.getInstance(context).subscribeGetShadowMqtt(topic);
             }
         }).start();
         Toast.makeText(context, "subscribe success.", Toast.LENGTH_SHORT).show();
@@ -82,12 +82,11 @@ public class ThingTestHelper implements TestConst, ReadThingShadowCallback {
 
     }
 
-    public void readShodow(final String endpoint, final String thingName, final ReadThingShadowCallback callback){
+    public void readShodow(final String shadowTopic){
         if(service == null){
             return;
         }
-//        AskeyIoTService.getInstance(context).readThingShadow(endpoint, thingName, callback);
-//        AskeyIoTService.getInstance(context).readThingShadow();
+        AskeyIoTService.getInstance(context).readThingShadow(shadowTopic);
     }
 
     public MqttMsgBuilder getTestDesiredMsgBuilder(){

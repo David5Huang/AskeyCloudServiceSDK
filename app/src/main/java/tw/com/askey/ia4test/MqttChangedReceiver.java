@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import tw.com.askey.webservice.sdk.iot.MqttActionConst;
+import com.askeycloud.webservice.sdk.iot.MqttActionConst;
 
 /**
  * Created by david5_huang on 2016/7/25.

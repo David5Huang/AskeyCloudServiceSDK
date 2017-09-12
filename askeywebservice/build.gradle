@@ -1,14 +1,16 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0"
+        versionName "2.3.4.20170831"
     }
     buildTypes {
         release {
@@ -16,7 +18,63 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+}
 
+version = '2.3.4'
+group = 'com.askeycloud'
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                name 'askeywebservice'
+                groupId 'com.askeycloud'
+                artifactId 'askeywebservice'
+                version '2.3.4'
+                description 'Askeycloud cloud service android client SDK.'
+
+                // Set your license
+//                licenses {
+//                    license {
+//                        name 'The Apache Software License, Version 2.0'
+//                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//                    }
+//                }
+                developers {
+                    developer {
+                        id 'david.huang'
+                        name 'David Huang'
+                        email 'david.huang@askeycloud.com'
+                    }
+                }
+//                scm {
+//                    connection gitUrl
+//                    developerConnection gitUrl
+//                    url siteUrl
+//                }
+            }
+        }
+    }
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        userOrg = 'askeycloudsdk'
+        repo = "sdk"
+        name = "askeycloudwebservice"
+        publish = true
+        version{
+            name = '2.3.4'
+            vcsTag = '2.3.4'
+        }
+    }
 }
 
 dependencies {
@@ -24,21 +82,10 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.0.0'
 
-    compile group: 'com.google.code.gson', name: 'gson', version: '2.3.1'
     compile 'com.amazonaws:aws-android-sdk-core:2.2.+'
-    compile 'com.amazonaws:aws-android-sdk-s3:2.2.+'
-    compile 'com.amazonaws:aws-android-sdk-ddb:2.2.+'
     compile 'com.amazonaws:aws-android-sdk-cognito:2.2.+'
     compile 'com.amazonaws:aws-android-sdk-iot:2.2.+'
-    compile 'com.amazonaws:aws-android-sdk-sns:2.2.+'
 
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
-
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile group: 'com.squareup.retrofit2', name: 'converter-jackson', version: '2.1.0'
-
-    compile('org.eclipse.paho:org.eclipse.paho.android.service:1.0.3-SNAPSHOT') {
-        exclude module: 'support-v4'
-    }
-
+    compile 'com.askeycloud:iotdevicesdk:1.0.1.20170726'
+    compile 'com.askeycloud:authsdk:1.1.0.20170824'
 }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AskeyWebService</string>
+    <string name="sdk_dialog_title">AskeyCloud SDK</string>
+    <string name="sdk_dialog_progress">Progress...</string>
 </resources>

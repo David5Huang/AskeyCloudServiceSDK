@@ -13,9 +13,9 @@ import com.facebook.login.LoginResult;
 
 import java.util.Arrays;
 
-import tw.com.askey.webservice.sdk.service.AskeyWebService;
-import tw.com.askey.webservice.sdk.setting.auth.FacebookLoginSource;
-import tw.com.askey.webservice.sdk.task.ServiceCallback;
+import com.askeycloud.webservice.sdk.service.web.AskeyWebService;
+import com.askeycloud.webservice.sdk.setting.auth.FacebookLoginSource;
+import com.askeycloud.webservice.sdk.task.ServiceCallback;
 
 /**
  * Created by david5_huang on 2016/8/25.

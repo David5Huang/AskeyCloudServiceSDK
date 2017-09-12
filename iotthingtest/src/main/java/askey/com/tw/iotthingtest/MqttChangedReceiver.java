@@ -9,7 +9,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import tw.com.askey.ia4test.MqttResultActivity;
-import tw.com.askey.webservice.sdk.iot.MqttActionConst;
+import com.askeycloud.webservice.sdk.iot.MqttActionConst;
 
 /**
  * Created by david5_huang on 2016/7/25.
@@ -22,6 +22,10 @@ public class MqttChangedReceiver extends BroadcastReceiver{
         if(intent != null){
             if(intent.getAction().equals(MqttActionConst.MQTT_RECEIVER_MESSAGE_ACTION)){
                 String msg = intent.getStringExtra(MqttActionConst.MQTT_RECEIVER_MESSAGE_DATA_TAG);
+                sendNotifi(context, msg);
+            }
+            else if(intent.getAction().equals(MqttActionConst.MQTT_GET_SHADOW_ACTION)){
+                String msg = intent.getStringExtra(MqttActionConst.MQTT_GET_SHADOW_DATA_TAG);
                 sendNotifi(context, msg);
             }
         }

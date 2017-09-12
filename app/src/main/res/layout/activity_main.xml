@@ -23,6 +23,7 @@
                 android:layout_height="wrap_content"
                 android:text="FB LOGIN"
                 android:layout_gravity="center_horizontal"
+                android:visibility="gone"
                 />
 
             <Button
@@ -31,6 +32,16 @@
                 android:layout_height="wrap_content"
                 android:text="Register"
                 android:layout_gravity="center_horizontal"
+                android:visibility="gone"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_email_register2_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Register2"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"
                 />
 
             <Button
@@ -39,13 +50,23 @@
                 android:layout_height="wrap_content"
                 android:text="Login"
                 android:layout_gravity="center_horizontal"
+                android:visibility="gone"
                 />
 
             <Button
-                android:id="@+id/ia4_test_pk_btn"
+                android:id="@+id/ia4_test_email_login2_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Keypair test"
+                android:text="Login2"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_user_info_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Get User Info"
                 android:layout_gravity="center_horizontal"
                 />
 
@@ -81,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
-                android:text="device single info"
+                android:text="device basic info"
                 />
 
             <Button
@@ -91,6 +112,15 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:text="device detail info"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_device_detail_update_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="device detail update"
                 />
 
             <Button
@@ -140,6 +170,24 @@
                 />
 
             <Button
+                android:id="@+id/ia4_test_iot_http_publish_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="iot http publish"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_iot_http_get_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="iot http get"
+                />
+
+            <Button
                 android:id="@+id/ia4_test_get_shadow_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -175,8 +223,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
-                android:text="change name"
-                android:visibility="gone"
+                android:text="Device Update"
+                />
+
+            <Button
+                android:id="@+id/ia4_test_get_endpoint_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="Get Endpoint"
                 />
 
         </LinearLayout>

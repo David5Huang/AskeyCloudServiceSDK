@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="tw.com.askey.webservice">
+    package="com.askeycloud.webservice">
 
     <application
         android:allowBackup="true"
